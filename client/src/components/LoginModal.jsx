@@ -24,25 +24,28 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
       ></div>
 
       {/* Modal */}
-      <div className="relative bg-[#1e2433] border border-[#2d3748] rounded-2xl p-8 w-full max-w-md shadow-2xl animate-fadeIn">
+      <div className="relative rounded-2xl p-8 w-full max-w-md shadow-2xl animate-fadeIn border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white transition"
+          className="absolute top-4 right-4 transition"
+          style={{ color: 'var(--text-secondary)' }}
+          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
         >
           <X className="h-5 w-5" />
         </button>
 
         {/* Header */}
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-white mb-2">Welcome to PolyClone</h2>
-          <p className="text-gray-400 text-sm">Enter a username to start trading instantly</p>
+          <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Welcome to PolyClone</h2>
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Enter a username to start trading instantly</p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit}>
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>
               Username
             </label>
             <input
@@ -50,10 +53,11 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your username"
-              className="w-full px-4 py-3 bg-[#252b3b] border border-[#2d3748] rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+              className="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+              style={{ backgroundColor: 'var(--bg-card-hover)', borderColor: 'var(--border-primary)', color: 'var(--text-primary)' }}
               autoFocus
             />
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-xs mt-2" style={{ color: 'var(--text-muted)' }}>
               New users start with 1000 points
             </p>
           </div>
@@ -63,7 +67,10 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-3 bg-[#252b3b] hover:bg-[#2d3748] text-gray-300 font-semibold rounded-lg transition"
+              className="flex-1 px-4 py-3 font-semibold rounded-lg transition"
+              style={{ backgroundColor: 'var(--bg-card-hover)', color: 'var(--text-secondary)' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--border-hover)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-card-hover)'}
             >
               Cancel
             </button>

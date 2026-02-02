@@ -48,36 +48,39 @@ export default function Profile() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* Profile Header */}
-      <div className="bg-[#1e2433] border border-[#2d3748] rounded-xl p-8 mb-6">
+      <div className="rounded-xl p-8 mb-6 border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-              <User className="h-8 w-8 text-white" />
+            <div 
+              className="w-16 h-16 rounded-full flex items-center justify-center text-white"
+              style={{ backgroundColor: 'var(--accent-primary)' }}
+            >
+              <User className="h-8 w-8" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-white">{data.user.username}</h1>
-              <p className="text-gray-400">
+              <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>{data.user.username}</h1>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                 Member since {new Date(data.user.createdAt).toLocaleDateString()}
               </p>
             </div>
           </div>
           
           <div className="text-right">
-            <p className="text-sm text-gray-400 mb-1">Current Balance</p>
-            <p className="text-5xl font-bold text-blue-400">{data.user.points}</p>
-            <p className="text-xs text-gray-500 mt-1">points</p>
+            <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>Current Balance</p>
+            <p className="text-5xl font-bold" style={{ color: 'var(--accent-primary)' }}>{data.user.points}</p>
+            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>points</p>
           </div>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-[#2d3748]">
+        <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t" style={{ borderColor: 'var(--border-primary)' }}>
           <div className="text-center">
-            <p className="text-2xl font-bold text-white">{data.orders.length}</p>
-            <p className="text-sm text-gray-400">Total Predictions</p>
+            <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{data.orders.length}</p>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Total Predictions</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold text-white">{totalBet}</p>
-            <p className="text-sm text-gray-400">Total Wagered</p>
+            <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{totalBet}</p>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Total Wagered</p>
           </div>
           <div className="text-center">
             <p className={`text-2xl font-bold flex items-center justify-center ${
@@ -90,17 +93,17 @@ export default function Profile() {
               )}
               {netProfit >= 0 ? '+' : ''}{netProfit}
             </p>
-            <p className="text-sm text-gray-400">Net Profit/Loss</p>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Net Profit/Loss</p>
           </div>
         </div>
       </div>
 
       {/* Activity History */}
       <div>
-        <h2 className="text-2xl font-bold text-white mb-4">Activity History</h2>
-        <div className="bg-[#1e2433] border border-[#2d3748] rounded-xl overflow-hidden">
+        <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Activity History</h2>
+        <div className="rounded-xl overflow-hidden border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
           {data.orders.length === 0 ? (
-            <div className="p-8 text-center text-gray-400">
+            <div className="p-8 text-center" style={{ color: 'var(--text-secondary)' }}>
               No predictions yet. Start trading to see your history!
             </div>
           ) : (
@@ -111,11 +114,14 @@ export default function Profile() {
               return (
                 <div 
                   key={order._id} 
-                  className="p-5 border-b border-[#2d3748] last:border-b-0 hover:bg-[#252b3b] transition"
+                  className="p-5 border-b last:border-b-0 transition"
+                  style={{ borderColor: 'var(--border-primary)' }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-card-hover)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <p className="font-medium text-white mb-1">
+                      <p className="font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
                         {order.marketId?.question || "Unknown Market"}
                       </p>
                       <div className="flex items-center space-x-3 text-sm">

@@ -50,7 +50,15 @@ router.get('/leaderboard', async (req, res) => {
 // List Markets
 router.get('/markets', async (req, res) => {
   try {
-    const markets = await Market.find().sort({ createdAt: -1 });
+    const { category } = req.query;
+    const filter = {};
+    
+    // If category is specified and not 'All', filter by category
+    if (category && category !== 'All') {
+      filter.category = category;
+    }
+    
+    const markets = await Market.find(filter).sort({ createdAt: -1 });
     res.json(markets);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -71,7 +79,7 @@ router.get('/markets/:id', async (req, res) => {
 // Create Market (Seed/Admin)
 router.post('/markets', async (req, res) => {
   try {
-    const { question, description, outcomes, closesAt } = req.body;
+    const { question, description, outcomes, closesAt, category } = req.body;
     
     // Initialize pools
     const outcomePools = {};
@@ -81,6 +89,7 @@ router.post('/markets', async (req, res) => {
     const market = new Market({
       question,
       description,
+      category: category || 'All',
       outcomes,
       outcomePools,
       closesAt

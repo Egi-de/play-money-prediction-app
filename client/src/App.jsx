@@ -9,7 +9,7 @@ import Profile from './pages/Profile';
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-[#0f1419] text-white">
+      <div className="min-h-screen transition-colors duration-300" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
         <Navbar />
         <main>
           <Routes>

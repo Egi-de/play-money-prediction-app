@@ -4,6 +4,18 @@ import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import api from '../api/client';
 import LoginModal from '../components/LoginModal';
 
+const getCategoryColor = (category) => {
+  const colors = {
+    'Crypto': 'var(--category-crypto)',
+    'Weather': 'var(--category-weather)',
+    'Tech': 'var(--category-tech)',
+    'Sports': 'var(--category-sports)',
+    'Economics': 'var(--category-economics)',
+    'All': 'var(--category-all)'
+  };
+  return colors[category] || 'var(--category-all)';
+};
+
 export default function MarketDetail() {
   const { id } = useParams();
   const [market, setMarket] = useState(null);
@@ -126,18 +138,28 @@ export default function MarketDetail() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* Market Header */}
-      <div className="bg-[#1e2433] border border-[#2d3748] rounded-xl p-8 mb-6">
-        <h1 className="text-3xl font-bold text-white mb-3">{market.question}</h1>
-        <p className="text-gray-400 mb-6">{market.description}</p>
+      <div className="rounded-xl p-8 mb-6 border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
+        
+        <h1 className="text-3xl font-bold mb-3" style={{ color: 'var(--text-primary)' }}>{market.question}</h1>
+        <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>{market.description}</p>
         
         {/* Odds Display - Polymarket Style */}
         <div className="grid grid-cols-2 gap-4 mb-6">
           {/* Yes */}
-          <div className={`${isResolved && market.resolvedOutcome === 'Yes' ? 'bg-green-600/20 border-green-500 border-2' : 'bg-green-600/10 border-green-600/30'} border rounded-xl p-6 transition`}>
-            <div className="text-sm text-green-400 font-medium mb-2">Yes</div>
-            <div className="text-5xl font-bold text-green-400 mb-2">{yesOdds}%</div>
+          <div className={`${isResolved && market.resolvedOutcome === 'Yes' ? 'border-2' : 'border'} rounded-xl p-6 transition`}
+            style={{
+              backgroundColor: isResolved && market.resolvedOutcome === 'Yes' 
+                ? 'rgba(20, 184, 166, 0.2)' 
+                : 'rgba(20, 184, 166, 0.1)',
+              borderColor: isResolved && market.resolvedOutcome === 'Yes'
+                ? 'var(--accent-primary)'
+                : 'rgba(20, 184, 166, 0.3)'
+            }}
+          >
+            <div className="text-sm font-medium mb-2" style={{ color: 'var(--accent-primary)' }}>Yes</div>
+            <div className="text-5xl font-bold mb-2" style={{ color: 'var(--accent-primary)' }}>{yesOdds}%</div>
             {isResolved && market.resolvedOutcome === 'Yes' && (
-              <div className="flex items-center text-green-400 text-sm">
+              <div className="flex items-center text-sm" style={{ color: 'var(--accent-primary)' }}>
                 <CheckCircle2 className="h-4 w-4 mr-1" />
                 <span>Winner</span>
               </div>
@@ -158,11 +180,11 @@ export default function MarketDetail() {
         </div>
 
         {/* Market Info */}
-        <div className="flex items-center justify-between text-sm text-gray-400 pt-4 border-t border-[#2d3748]">
+        <div className="flex items-center justify-between text-sm pt-4 border-t" style={{ color: 'var(--text-secondary)', borderColor: 'var(--border-primary)' }}>
           <span>{totalVolume} points volume</span>
           <span>
             {isResolved ? (
-              <span className="text-blue-400 font-medium">Resolved</span>
+              <span className="font-medium" style={{ color: 'var(--accent-primary)' }}>Resolved</span>
             ) : isClosed ? (
               <span className="text-yellow-400 font-medium">Closed</span>
             ) : (
@@ -175,8 +197,8 @@ export default function MarketDetail() {
       {/* Action Panel */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Prediction Form */}
-        <div className="bg-[#1e2433] border border-[#2d3748] rounded-xl p-6">
-          <h3 className="text-xl font-bold text-white mb-4">Place Prediction</h3>
+        <div className="rounded-xl p-6 border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
+          <h3 className="text-xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Place Prediction</h3>
           
           {/* Error/Success Messages */}
           {error && (
@@ -194,31 +216,37 @@ export default function MarketDetail() {
           )}
 
           {isResolved ? (
-            <div className="bg-blue-600/10 border border-blue-600/30 rounded-lg p-6 text-center">
-              <h4 className="text-lg font-bold text-white mb-2">Market Resolved</h4>
-              <p className="text-gray-400">
-                Winning Outcome: <span className="font-bold text-blue-400">{market.resolvedOutcome}</span>
+            <div className="rounded-lg p-6 text-center" style={{ backgroundColor: 'rgba(20, 184, 166, 0.1)', border: '1px solid rgba(20, 184, 166, 0.3)' }}>
+              <h4 className="text-lg font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Market Resolved</h4>
+              <p style={{ color: 'var(--text-secondary)' }}>
+                Winning Outcome: <span className="font-bold" style={{ color: 'var(--accent-primary)' }}>{market.resolvedOutcome}</span>
               </p>
             </div>
           ) : isClosed ? (
             <div className="bg-yellow-600/10 border border-yellow-600/30 rounded-lg p-6 text-center">
-              <h4 className="text-lg font-bold text-white mb-2">Market Closed</h4>
-              <p className="text-gray-400">This market is no longer accepting predictions</p>
+              <h4 className="text-lg font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Market Closed</h4>
+              <p style={{ color: 'var(--text-secondary)' }}>This market is no longer accepting predictions</p>
             </div>
           ) : user ? (
             <form onSubmit={handlePredict}>
               {/* Outcome Selection */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-300 mb-2">Select Outcome</label>
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>Select Outcome</label>
                 <div className="grid grid-cols-2 gap-3">
                   <button 
                     type="button" 
                     onClick={() => setOutcome('Yes')} 
                     className={`py-3 rounded-lg font-bold transition transform active:scale-95 ${
                       outcome === 'Yes' 
-                        ? 'bg-green-600 text-white' 
-                        : 'bg-[#252b3b] text-gray-400 hover:bg-[#2d3748]'
+                        ? 'text-white' 
+                        : ''
                     }`}
+                    style={outcome === 'Yes' ? { 
+                      backgroundColor: 'var(--accent-primary)' 
+                    } : { 
+                      backgroundColor: 'var(--bg-card-hover)', 
+                      color: 'var(--text-secondary)' 
+                    }}
                   >
                     Yes
                   </button>
@@ -228,8 +256,9 @@ export default function MarketDetail() {
                     className={`py-3 rounded-lg font-bold transition transform active:scale-95 ${
                       outcome === 'No' 
                         ? 'bg-red-600 text-white' 
-                        : 'bg-[#252b3b] text-gray-400 hover:bg-[#2d3748]'
+                        : ''
                     }`}
+                    style={outcome !== 'No' ? { backgroundColor: 'var(--bg-card-hover)', color: 'var(--text-secondary)' } : {}}
                   >
                     No
                   </button>
@@ -238,25 +267,29 @@ export default function MarketDetail() {
 
               {/* Amount Input */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>
                   Amount (Points)
                 </label>
                 <input 
                   type="number" 
                   value={amount}
                   onChange={e => setAmount(e.target.value)}
-                  className="w-full p-3 bg-[#252b3b] border border-[#2d3748] rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                  className="w-full p-3 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                  style={{ backgroundColor: 'var(--bg-card-hover)', borderColor: 'var(--border-primary)', color: 'var(--text-primary)' }}
                   placeholder={`Balance: ${user.points} pts`}
                   min="1"
                   max={user.points}
                 />
-                <p className="text-xs text-gray-500 mt-1">Available: {user.points} points</p>
+                <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Available: {user.points} points</p>
               </div>
 
               {/* Submit Button */}
               <button 
                 type="submit" 
-                className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed" 
+                className="w-full py-3 text-white font-bold rounded-lg transition transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed" 
+                style={{ backgroundColor: 'var(--accent-primary)' }}
+                onMouseEnter={(e) => !e.currentTarget.disabled && (e.currentTarget.style.backgroundColor = 'var(--accent-primary-hover)')}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-primary)'}
                 disabled={!amount || amount <= 0}
               >
                 Predict {outcome}
@@ -264,10 +297,13 @@ export default function MarketDetail() {
             </form>
           ) : (
             <div className="text-center py-8">
-              <p className="text-gray-400 mb-4">Please sign in to place predictions</p>
+              <p className="mb-4" style={{ color: 'var(--text-secondary)' }}>Please sign in to place predictions</p>
               <button 
                 onClick={() => setShowLoginModal(true)}
-                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition"
+                className="px-6 py-2 text-white font-semibold rounded-lg transition"
+                style={{ backgroundColor: 'var(--accent-primary)' }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-primary-hover)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-primary)'}
               >
                 Sign In
               </button>
@@ -276,28 +312,28 @@ export default function MarketDetail() {
         </div>
 
         {/* Rules Panel */}
-        <div className="bg-[#1e2433] border border-[#2d3748] rounded-xl p-6">
-          <h3 className="text-xl font-bold text-white mb-4">How It Works</h3>
-          <ul className="space-y-3 text-sm text-gray-400">
+        <div className="rounded-xl p-6 border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
+          <h3 className="text-xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>How It Works</h3>
+          <ul className="space-y-3 text-sm" style={{ color: 'var(--text-secondary)' }}>
             <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span>
-              <span>Predictions use a <strong className="text-white">parimutuel system</strong> - all bets pool together</span>
+              <span className="mr-2" style={{ color: 'var(--accent-primary)' }}>•</span>
+              <span>Predictions use a <strong style={{ color: 'var(--text-primary)' }}>parimutuel system</strong> - all bets pool together</span>
             </li>
             <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span>
+              <span className="mr-2" style={{ color: 'var(--accent-primary)' }}>•</span>
               <span>Odds update dynamically based on the pool ratio</span>
             </li>
             <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span>
-              <span>Winners share the <strong className="text-white">total pool</strong> proportional to their bet</span>
+              <span className="mr-2" style={{ color: 'var(--accent-primary)' }}>•</span>
+              <span>Winners share the <strong style={{ color: 'var(--text-primary)' }}>total pool</strong> proportional to their bet</span>
             </li>
             <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span>
+              <span className="mr-2" style={{ color: 'var(--accent-primary)' }}>•</span>
               <span>If you bet 100 on Yes and Yes wins, your payout depends on the final pool split</span>
             </li>
             <li className="flex items-start">
-              <span className="text-blue-400 mr-2">•</span>
-              <span>This is <strong className="text-white">play money</strong> - no real currency involved</span>
+              <span className="mr-2" style={{ color: 'var(--accent-primary)' }}>•</span>
+              <span>This is <strong style={{ color: 'var(--text-primary)' }}>play money</strong> - no real currency involved</span>
             </li>
           </ul>
         </div>

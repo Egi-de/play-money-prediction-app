@@ -55,53 +55,66 @@ export default function Leaderboard() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
       {/* Header */}
-      <div className="flex items-center justify-center mb-8">
-        <Trophy className="h-8 w-8 text-yellow-400 mr-3" />
-        <h1 className="text-3xl font-bold text-white">Leaderboard</h1>
+      <div className="flex flex-col items-center justify-center mb-8">
+        <div className="flex items-center">
+          <Trophy className="h-8 w-8 text-yellow-400 mr-3" />
+          <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Leaderboard</h1>
+        </div>
+        <p className="mb-8" style={{ color: 'var(--text-secondary)' }}>Top traders by points</p>
       </div>
       
       {/* Leaderboard Table */}
-      <div className="bg-[#1e2433] border border-[#2d3748] rounded-xl overflow-hidden">
+      <div className="rounded-xl overflow-hidden" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-primary)' }}>
         {users.length === 0 ? (
           <div className="p-8 text-center text-gray-400">
             No users yet. Be the first to join!
           </div>
         ) : (
-          users.map((user, index) => (
-            <div 
-              key={user._id} 
-              className={`flex items-center justify-between p-5 border-b border-[#2d3748] last:border-b-0 hover:bg-[#252b3b] transition ${
-                index < 3 ? 'bg-[#252b3b]/50' : ''
-              }`}
-            >
-              <div className="flex items-center space-x-4">
-                {/* Rank */}
-                <div className={`w-12 h-12 flex items-center justify-center rounded-full border ${getRankBadge(index)}`}>
-                  {getRankIcon(index) || (
-                    <span className="font-bold text-lg">{index + 1}</span>
-                  )}
-                </div>
-                
-                {/* Username */}
-                <div>
-                  <span className="font-semibold text-lg text-white">{user.username}</span>
-                  {index === 0 && (
-                    <span className="ml-2 text-xs bg-yellow-600/20 text-yellow-400 px-2 py-1 rounded">
-                      Top Trader
-                    </span>
-                  )}
-                </div>
-              </div>
-              
-              {/* Points */}
-              <div className="text-right">
-                <div className="font-mono font-bold text-xl text-blue-400">
-                  {user.points.toLocaleString()}
-                </div>
-                <div className="text-xs text-gray-500">points</div>
-              </div>
-            </div>
-          ))
+          <table className="min-w-full divide-y divide-transparent">
+            <tbody>
+              {users.map((user, index) => (
+                <tr 
+                  key={user._id} 
+                  className="border-b last:border-b-0 transition"
+                  style={{ borderColor: 'var(--border-primary)', backgroundColor: index < 3 ? 'var(--bg-card-highlight)' : 'transparent' }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-card-hover)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = index < 3 ? 'var(--bg-card-highlight)' : 'transparent'}
+                >
+                  <td className="px-6 py-5">
+                    <div className="flex items-center space-x-4">
+                      {/* Rank */}
+                      <div className={`w-12 h-12 flex items-center justify-center rounded-full border ${getRankBadge(index)}`}>
+                        {getRankIcon(index) || (
+                          <span className="font-bold text-lg">{index + 1}</span>
+                        )}
+                      </div>
+                      
+                      {/* Username */}
+                      <div>
+                        <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{user.username}</span>
+                        {index === 0 && (
+                          <span className="ml-2 text-xs px-2 py-1 rounded font-medium" style={{
+                            backgroundColor: '#fbbf24',
+                            color: '#78350f'
+                          }}>
+                            Top Trader
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </td>
+                  
+                  {/* Points */}
+                  <td className="px-6 py-5 text-right">
+                    <div className="font-mono font-bold text-xl" style={{ color: 'var(--text-accent)' }}>
+                      {user.points.toLocaleString()}
+                    </div>
+                    <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>points</div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
 

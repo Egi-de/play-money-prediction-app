@@ -8,7 +8,8 @@ A full-stack prediction market platform inspired by Polymarket, built with the M
 
 ## ✨ Features
 
-- **🎨 Premium Dark Theme**: Modern UI inspired by Polymarket with bold percentages and smooth animations
+- **🎨 Dark/Light Theme Toggle**: Switch between dark and light modes with smooth transitions
+- **🔍 Search & Filter**: Search markets by keywords and filter by status (Open/Resolved)
 - **📊 Real-Time Odds**: Dynamic probability calculations based on parimutuel betting pools
 - **👤 User Profiles**: Track your balance, betting history, and profit/loss
 - **🏆 Leaderboard**: Compete with other traders and climb the rankings
@@ -171,15 +172,21 @@ npm test
 - ✅ **Backend Tests**: Comprehensive Jest test suite
 - ✅ **Docker Setup**: One-command deployment with docker-compose
 
+## 🌟 Additional Polish Features
+
+- ✅ **Theme Toggle**: Dark/light mode switcher with CSS variables
+- ✅ **Search Functionality**: Real-time search across market titles and descriptions
+- ✅ **Status Filters**: Filter markets by Open, Resolved, or All
+- ✅ **Smooth Transitions**: Theme changes and UI interactions with smooth animations
+
 ## 🚀 What I Would Improve With More Time
 
 ### Features
 1. **Real-time updates** with WebSockets for live odds changes
 2. **Market creation UI** for users to propose new markets
 3. **Pagination** for markets list (currently loads all)
-4. **Advanced filtering** by category, volume, closing date
-5. **Chart visualization** of odds history over time
-6. **Social features**: comments, likes, market sharing
+4. **Chart visualization** of odds history over time
+5. **Social features**: comments, likes, market sharing
 
 ### Technical
 1. **JWT authentication** with refresh tokens
@@ -190,11 +197,10 @@ npm test
 6. **CI/CD pipeline** with automated testing and deployment
 
 ### UX
-1. **Dark/light mode toggle**
-2. **Mobile app** (React Native)
-3. **Onboarding tutorial** for new users
-4. **Push notifications** for market resolutions
-5. **Accessibility improvements** (ARIA labels, keyboard navigation)
+1. **Mobile app** (React Native)
+2. **Onboarding tutorial** for new users
+3. **Push notifications** for market resolutions
+4. **Accessibility improvements** (ARIA labels, keyboard navigation)
 
 ## 💡 What I Learned from Polymarket
 

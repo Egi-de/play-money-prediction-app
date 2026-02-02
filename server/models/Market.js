@@ -3,6 +3,11 @@ const mongoose = require('mongoose');
 const MarketSchema = new mongoose.Schema({
   question: { type: String, required: true },
   description: String,
+  category: { 
+    type: String, 
+    enum: ['Crypto', 'Weather', 'Tech', 'Sports', 'Economics', 'All'], 
+    default: 'All' 
+  },
   outcomes: { type: [String], required: true }, 
   outcomePools: { 
     type: Map, 
