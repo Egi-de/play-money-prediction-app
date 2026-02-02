@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: prediction-market-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - prediction-network
+
+  backend:
+    build: ./server
+    container_name: prediction-market-api
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/prediction-market
+      - PORT=5000
+    depends_on:
+      - mongodb
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    networks:
+      - prediction-network
+    command: npm run dev
+
+  frontend:
+    build: ./client
+    container_name: prediction-market-ui
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - prediction-network
+    command: npm run dev -- --host
+
+volumes:
+  mongo-data:
+
+networks:
+  prediction-network:
+    driver: bridge
