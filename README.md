@@ -241,9 +241,7 @@ prediction-market/
 └── README.md
 ```
 
-## 🤝 Contributing
 
-This is a take-home assignment project, but feel free to fork and experiment!
 
 ## 📄 License
 
@@ -251,5 +249,4 @@ MIT License - feel free to use this for learning purposes.
 
 ---
 
-**Built with ❤️ in 2 days** | [View on GitHub](#)
->>>>>>> 18ab6c2 (refined README.md to standout)
+
