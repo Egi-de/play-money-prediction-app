@@ -136,13 +136,13 @@ npm test
 ## 📸 Screenshots
 
 ### Market List
-> **TODO**: Add screenshot of home page showing market cards with percentages
+![Home Page](screenshots/home.png)
 
 ### Market Detail
-> **TODO**: Add screenshot of market detail page with prediction form
+![Market Detail](screenshots/market_detail.png)
 
 ### Leaderboard
-> **TODO**: Add screenshot of leaderboard with top traders
+![Leaderboard](screenshots/leaderboard.png)
 
 ### User Profile
 > **TODO**: Add screenshot of profile page with betting history

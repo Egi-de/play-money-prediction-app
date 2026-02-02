@@ -19,7 +19,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
     <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4 font-sans">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/60"
         onClick={onClose}
       ></div>
 
@@ -38,7 +38,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
 
         {/* Header */}
         <div className="mb-6">
-          <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Welcome to PolyClone</h2>
+          <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Welcome to PredictX</h2>
           <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Enter a username to start trading instantly</p>
         </div>
 
@@ -53,8 +53,14 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your username"
-              className="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-              style={{ backgroundColor: 'var(--bg-card-hover)', borderColor: 'var(--border-primary)', color: 'var(--text-primary)' }}
+              className="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:border-transparent outline-none transition"
+              style={{ 
+                backgroundColor: 'var(--bg-card-hover)', 
+                borderColor: 'var(--border-primary)', 
+                color: 'var(--text-primary)',
+                '--tw-ring-color': 'var(--accent-primary)',
+                '--tw-ring-opacity': '0.5'
+              }}
               autoFocus
             />
             <p className="text-xs mt-2" style={{ color: 'var(--text-muted)' }}>
@@ -77,7 +83,10 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
             <button
               type="submit"
               disabled={!username.trim()}
-              className="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-3 text-white font-semibold rounded-lg transition transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ backgroundColor: 'var(--accent-primary)' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-primary-hover)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-primary)'}
             >
               Sign In
             </button>
