@@ -144,6 +144,10 @@ npm test
 ### Leaderboard
 ![Leaderboard](screenshots/leaderboard.png)
 
+### Admin Panel
+![Admin Panel](screenshots/adminpanel.png)
+
+
 ### User Profile
 > **TODO**: Add screenshot of profile page with betting history
 
