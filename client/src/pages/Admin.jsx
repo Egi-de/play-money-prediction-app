@@ -200,7 +200,7 @@ export default function Admin() {
                   value={formData.category}
                   onChange={e => setFormData({...formData, category: e.target.value})}
                 >
-                  {['Crypto', 'Sports', 'Tech', 'Politics', 'Economics', 'Science'].map(c => (
+                  {['Crypto', 'Weather', 'Tech', 'Sports', 'Economics', 'Science', 'Politics'].map(c => (
                     <option key={c} value={c}>{c}</option>
                   ))}
                 </select>

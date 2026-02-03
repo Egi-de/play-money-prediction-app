@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Search, Filter, TrendingUp, Clock, CheckCircle } from 'lucide-react';
 import api from '../api/client';
 
-const CATEGORIES = ['All', 'Weather', 'Tech', 'Sports', 'Economics'];
+const CATEGORIES = ['All', 'Crypto', 'Weather', 'Tech', 'Sports', 'Economics', 'Science', 'Politics'];
 
 const getCategoryColor = (category) => {
   const colors = {
@@ -12,6 +12,8 @@ const getCategoryColor = (category) => {
     'Tech': 'var(--category-tech)',
     'Sports': 'var(--category-sports)',
     'Economics': 'var(--category-economics)',
+    'Science': 'var(--category-science)',
+    'Politics': 'var(--category-politics)',
     'All': 'var(--category-all)'
   };
   return colors[category] || 'var(--category-all)';

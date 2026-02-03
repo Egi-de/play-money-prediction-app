@@ -5,7 +5,7 @@ const MarketSchema = new mongoose.Schema({
   description: String,
   category: { 
     type: String, 
-    enum: ['Crypto', 'Weather', 'Tech', 'Sports', 'Economics', 'All'], 
+    enum: ['Crypto', 'Weather', 'Tech', 'Sports', 'Economics', 'Science', 'Politics', 'All'], 
     default: 'All' 
   },
   outcomes: { type: [String], required: true }, 

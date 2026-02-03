@@ -12,6 +12,8 @@ const getCategoryColor = (category) => {
     'Tech': 'var(--category-tech)',
     'Sports': 'var(--category-sports)',
     'Economics': 'var(--category-economics)',
+    'Science': 'var(--category-science)',
+    'Politics': 'var(--category-politics)',
     'All': 'var(--category-all)'
   };
   return colors[category] || 'var(--category-all)';
