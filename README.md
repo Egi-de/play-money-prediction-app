@@ -1,7 +1,7 @@
-
 # play-money-prediction-app
-Full-stack prediction market platform inspired by Polymarket. Built with React, Node.js, Express &amp; MongoDB. Users can predict outcomes using virtual points, track their performance, and compete on leaderboards.
-=======
+
+# Full-stack prediction market platform inspired by Polymarket. Built with React, Node.js, Express &amp; MongoDB. Users can predict outcomes using virtual points, track their performance, and compete on leaderboards.
+
 # 🎯 Mini Prediction Market (Play Money)
 
 A full-stack prediction market platform inspired by Polymarket, built with the MERN stack (MongoDB, Express, React, Node.js). Trade on future events using virtual points in a sleek, modern interface.
@@ -21,6 +21,7 @@ A full-stack prediction market platform inspired by Polymarket, built with the M
 ## 🛠 Tech Stack
 
 ### Frontend
+
 - **React 19** with Vite for blazing-fast development
 - **Tailwind CSS 4** for modern, utility-first styling
 - **Lucide React** for beautiful icons
@@ -28,12 +29,14 @@ A full-stack prediction market platform inspired by Polymarket, built with the M
 - **Axios** for API communication
 
 ### Backend
+
 - **Node.js** with Express 5
 - **MongoDB** with Mongoose for data persistence
 - **CORS** enabled for cross-origin requests
 - **Atomic operations** for concurrency safety
 
 ### DevOps
+
 - **Docker Compose** for one-command deployment
 - **Jest & Supertest** for comprehensive API testing
 - **Nodemon** for hot-reload development
@@ -41,6 +44,7 @@ A full-stack prediction market platform inspired by Polymarket, built with the M
 ## 🎲 Design Decisions & Trade-offs
 
 ### Betting System: Parimutuel (Pool-Based)
+
 Instead of a complex order book with bid/ask spreads (hard to build in 2 days with low liquidity), I chose a **parimutuel system**:
 
 - **How it works**: All bets go into outcome-specific pools (Yes/No)
@@ -48,36 +52,99 @@ Instead of a complex order book with bid/ask spreads (hard to build in 2 days wi
 - **Payout**: Winners share the total pool proportional to their bet size
 
 **Pros**:
+
 - ✅ Guaranteed liquidity (you can always bet)
 - ✅ Simple to understand and implement
 - ✅ Automatic fair odds based on market sentiment
 - ✅ No spread or slippage issues
 
 **Cons**:
+
 - ❌ Final payout unknown until market closes (odds can shift)
 - ❌ No ability to "sell" your position early
 
 ### Concurrency & Safety
+
 - **Atomic Transactions**: Used MongoDB `findOneAndUpdate` with `$inc` to handle bet placement
 - **Why it matters**: Prevents double-spending and ensures pool totals remain accurate under high load
 - **Implementation**: Balance check and deduction happen in a single atomic operation
 
 ```javascript
 const user = await User.findOneAndUpdate(
-    { _id: userId, points: { $gte: amount } },
-    { $inc: { points: -amount } },
-    { new: true }
+  { _id: userId, points: { $gte: amount } },
+  { $inc: { points: -amount } },
+  { new: true }
 );
 ```
 
 ### Simple Authentication
+
 - **Username-only login** (no passwords)
 - **Why**: Speeds up development and perfect for a demo/play-money app
 - **Production note**: Would add JWT tokens + bcrypt hashing for real deployment
 
+### Duplicate Predictions
+
+Users **can place multiple predictions** on the same market with different amounts. This design allows:
+
+- **Dollar-cost averaging**: Users can adjust their positions as new information emerges
+- **Flexible risk management**: Split predictions across multiple bets
+- **Better UX**: No artificial restrictions on trading strategy
+
+**Alternative considered**: One prediction per user per market (rejected as too restrictive for a trading platform)
+
+**Implementation**: No unique constraint on `(userId, marketId)` pairs in the Order model
+
+### Payout Distribution & Edge Cases
+
+**Standard Case** (Winners exist):
+
+- All bets pool together into outcome-specific pools (Yes pool + No pool)
+- When resolved, winners share the **total pool** proportional to their bet size
+- Example: If you bet 100 on Yes (out of 500 total Yes bets) and the total pool is 1000, you receive (100/500) × 1000 = 200 points
+
+**Edge Case** (No one bets on winning outcome):
+
+- All losers forfeit their bets (points go to the pool)
+- **No payouts distributed** since `winningPool = 0`
+- This is standard behavior in parimutuel systems
+- Prevents divide-by-zero errors and maintains system integrity
+
+**Code Implementation**:
+
+```javascript
+if (winningPool > 0) {
+  // Distribute payouts proportionally
+} else {
+  // All bets lost, no winners to pay out
+}
+```
+
+### Admin Restrictions
+
+To maintain platform integrity and avoid conflicts of interest:
+
+- **Admin users cannot place bets** on any markets
+- Admins can only create and resolve markets
+- This is enforced server-side in the `/api/orders` endpoint
+- Ensures fair play and prevents insider trading
+
+**Code Protection**:
+
+```javascript
+if (bettingUser.isAdmin) {
+  return res.status(403).json({ error: "Admin users cannot place bets" });
+}
+```
+
+### Naming Conventions
+
+I use **"Market"** instead of **"Event"** throughout the codebase, as it's more standard terminology in prediction market platforms (Polymarket, Kalshi, Manifold Markets). Both terms refer to the same concept: a question with multiple outcomes that users can predict on.
+
 ## 📦 Setup & Run
 
 ### Prerequisites
+
 - **Node.js** (v18 or higher)
 - **MongoDB** running locally at `mongodb://localhost:27017`
   - Or update `MONGO_URI` in `server/.env`
@@ -85,6 +152,7 @@ const user = await User.findOneAndUpdate(
 ### Option 1: Manual Setup
 
 #### 1. Backend Setup
+
 ```bash
 cd server
 npm install
@@ -95,14 +163,17 @@ node seed.js
 # Start the server
 npm run dev
 ```
+
 Server runs on `http://localhost:5000`
 
 #### 2. Frontend Setup
+
 ```bash
 cd client
 npm install
 npm run dev
 ```
+
 Client runs on `http://localhost:5173`
 
 ### Option 2: Docker Setup (Recommended)
@@ -125,6 +196,7 @@ npm test
 ```
 
 **Test Coverage**:
+
 - ✅ User creation with 1000 starting points
 - ✅ Market creation and listing
 - ✅ Prediction placement with balance validation
@@ -136,35 +208,42 @@ npm test
 ## 📸 Screenshots
 
 ### Market List
+
 ![Home Page](screenshots/home.png)
 
 ### Market Detail
+
 ![Market Detail](screenshots/market_detail.png)
 
 ### Leaderboard
+
 ![Leaderboard](screenshots/leaderboard.png)
 
 ### Admin Panel
+
 ![Admin Panel](screenshots/adminpanel.png)
 
-
 ### User Profile
+
 > **TODO**: Add screenshot of profile page with betting history
 
 ## 🔌 API Endpoints
 
 ### Users
+
 - `POST /api/users` - Create or login user
 - `GET /api/users/:username` - Get user profile and history
 - `GET /api/leaderboard` - Get top 10 users by points
 
 ### Markets
+
 - `GET /api/markets` - List all markets
 - `GET /api/markets/:id` - Get market details
 - `POST /api/markets` - Create new market (admin/seed)
 - `POST /api/markets/:id/resolve` - Resolve market and distribute payouts
 
 ### Orders
+
 - `POST /api/orders` - Place a prediction
 
 ## 🎯 Bonus Features Implemented
@@ -186,6 +265,7 @@ npm test
 ## 🚀 What I Would Improve With More Time
 
 ### Features
+
 1. **Real-time updates** with WebSockets for live odds changes
 2. **Market creation UI** for users to propose new markets
 3. **Pagination** for markets list (currently loads all)
@@ -193,6 +273,7 @@ npm test
 5. **Social features**: comments, likes, market sharing
 
 ### Technical
+
 1. **JWT authentication** with refresh tokens
 2. **Rate limiting** to prevent API abuse
 3. **Caching layer** (Redis) for frequently accessed data
@@ -201,6 +282,7 @@ npm test
 6. **CI/CD pipeline** with automated testing and deployment
 
 ### UX
+
 1. **Mobile app** (React Native)
 2. **Onboarding tutorial** for new users
 3. **Push notifications** for market resolutions
@@ -209,6 +291,7 @@ npm test
 ## 💡 What I Learned from Polymarket
 
 ### Conceptual Borrowing
+
 - **Binary outcomes** (Yes/No) for simplicity
 - **Prominent percentage display** (69%, 32%) as the main visual
 - **Volume indicators** to show market activity
@@ -216,12 +299,14 @@ npm test
 - **Leaderboard** to gamify the experience
 
 ### Simplifications Made
+
 - **No order book**: Used parimutuel instead of complex bid/ask matching
 - **No crypto**: Play money only, no blockchain integration
 - **Manual resolution**: Admin trigger instead of oracle-based resolution
 - **Simpler liquidity**: Guaranteed liquidity vs. AMM curves
 
 ### Design Adaptations
+
 - **Dark theme** with navy/blue color scheme
 - **Bold typography** (Inter font) for modern feel
 - **Card-based layout** for easy scanning
@@ -251,12 +336,8 @@ prediction-market/
 └── README.md
 ```
 
-
-
 ## 📄 License
 
 MIT License - feel free to use this for learning purposes.
 
 ---
-
-
