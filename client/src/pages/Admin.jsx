@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../api/client';
+import { toast } from 'react-toastify';
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState('markets'); // markets | create | logs
@@ -29,7 +30,7 @@ export default function Admin() {
       const res = await api.get('/markets?category=All');
       setMarkets(res.data);
     } catch (err) {
-      alert('Failed to fetch markets');
+      toast.error('Failed to fetch markets');
     } finally {
       setLoading(false);
     }
@@ -42,7 +43,7 @@ export default function Admin() {
       const res = await api.get('/admin/logs', { params: { userId } });
       setLogs(res.data);
     } catch (err) {
-      alert('Failed to fetch logs');
+      toast.error('Failed to fetch logs');
     } finally {
       setLoading(false);
     }
@@ -53,7 +54,7 @@ export default function Admin() {
     
     // Validate date
     if (new Date(formData.closesAt) <= new Date()) {
-      alert('Error: Closing date must be in the future');
+      toast.error('Closing date must be in the future');
       return;
     }
 
@@ -66,11 +67,11 @@ export default function Admin() {
         outcomes: outcomesArray,
         userId // Required for middleware
       });
-      alert('Market created successfully!');
+      toast.success('Market created successfully!');
       setFormData({ question: '', description: '', category: 'Crypto', outcomes: 'YES,NO', closesAt: '' });
       setActiveTab('markets');
     } catch (err) {
-      alert(err.response?.data?.error || 'Error creating market');
+      toast.error(err.response?.data?.error || 'Error creating market');
     }
   };
 
@@ -79,10 +80,10 @@ export default function Admin() {
 
     try {
       await api.post(`/markets/${id}/resolve`, { outcome, userId });
-      alert('Market resolved!');
+      toast.success('Market resolved!');
       fetchMarkets();
     } catch (err) {
-      alert(err.response?.data?.error || 'Error resolving market');
+      toast.error(err.response?.data?.error || 'Error resolving market');
     }
   };
 
@@ -91,10 +92,22 @@ export default function Admin() {
 
     try {
       await api.delete(`/markets/${id}`, { data: { userId } }); // axios delete body syntax
-      alert('Market deleted!');
+      toast.success('Market deleted!');
       fetchMarkets();
     } catch (err) {
-      alert(err.response?.data?.error || 'Error deleting market');
+      toast.error(err.response?.data?.error || 'Error deleting market');
+    }
+  };
+
+  const handleDateChange = (e) => {
+    const newDate = e.target.value;
+    setFormData({...formData, closesAt: newDate});
+    
+    // Auto-validate on change
+    if (newDate && new Date(newDate) <= new Date()) {
+        toast.error('Please select a future date', {
+            toastId: 'date-error' // Prevent duplicates
+        });
     }
   };
 
@@ -218,9 +231,10 @@ export default function Admin() {
                 <input
                   required
                   type="date"
+                  min={new Date().toISOString().split('T')[0]} // Prevent past dates in picker
                   className="w-full bg-surface border border-border rounded p-2 focus:border-primary outline-none"
                   value={formData.closesAt}
-                  onChange={e => setFormData({...formData, closesAt: e.target.value})}
+                  onChange={handleDateChange}
                 />
               </div>
             </div>

@@ -10,10 +10,14 @@ import { AdminProvider } from './context/AdminContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Admin from './pages/Admin';
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 function App() {
   return (
     <AdminProvider>
       <Router>
+        <ToastContainer position="bottom-right" theme="dark" />
         <div className="min-h-screen transition-colors duration-300" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
           <Navbar />
           <main>
