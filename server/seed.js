@@ -1,40 +1,54 @@
-require('dotenv').config();
 const mongoose = require('mongoose');
-const Market = require('./models/Market');
+const User = require('./models/User');
+require('dotenv').config();
 
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/prediction-market')
-  .then(() => console.log('Connected for seeding'))
-  .catch(err => console.error(err));
+/**
+ * Bootstrap script to create super admin user
+ * Run with: node seed.js
+ */
+async function createSuperAdmin() {
+  try {
+    // Connect to MongoDB
+    await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/prediction-market');
+    console.log('✅ Connected to MongoDB');
 
-const markets = [
-  {
-    question: "Will Bitcoin hit $100k by the end of 2026?",
-    description: "Predicting if BTC price will touch $100,000 USD on any major exchange before Jan 1, 2027.",
-    outcomes: ["Yes", "No"],
-    outcomePools: { "Yes": 500, "No": 500 },
-    closesAt: new Date("2026-12-31"),
-  },
-  {
-    question: "Will SpaceX land humans on Mars before 2030?",
-    description: "Successful landing of at least one human on the surface of Mars.",
-    outcomes: ["Yes", "No"],
-    outcomePools: { "Yes": 200, "No": 800 },
-    closesAt: new Date("2029-12-31"),
-  },
-  {
-    question: "Will GPT-6 be released in 2026?",
-    description: "Official public release or announcement of GPT-6 by OpenAI.",
-    outcomes: ["Yes", "No"],
-    outcomePools: { "Yes": 1000, "No": 200 },
-    closesAt: new Date("2026-12-31"),
+    // Get admin credentials from environment variables
+    const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+    const adminPoints = parseInt(process.env.ADMIN_POINTS) || 10000;
+
+    // Check if admin already exists
+    let admin = await User.findOne({ username: adminUsername });
+
+    if (admin) {
+      // Update existing user to be admin
+      if (!admin.isAdmin) {
+        admin.isAdmin = true;
+        await admin.save();
+        console.log(`✅ Updated existing user "${adminUsername}" to admin`);
+      } else {
+        console.log(`ℹ️  Admin user "${adminUsername}" already exists`);
+      }
+    } else {
+      // Create new admin user
+      admin = new User({
+        username: adminUsername,
+        points: adminPoints,
+        isAdmin: true
+      });
+      await admin.save();
+      console.log(`✅ Created super admin: "${adminUsername}" with ${adminPoints} points`);
+    }
+
+    console.log('\n🎉 Super admin setup complete!');
+    console.log(`   Username: ${adminUsername}`);
+    console.log(`   Admin: ${admin.isAdmin}`);
+    console.log(`   Points: ${admin.points}`);
+    
+    process.exit(0);
+  } catch (error) {
+    console.error('❌ Error creating super admin:', error);
+    process.exit(1);
   }
-];
+}
 
-const seed = async () => {
-  await Market.deleteMany({});
-  await Market.insertMany(markets);
-  console.log('Markets seeded!');
-  process.exit();
-};
-
-seed();
+createSuperAdmin();

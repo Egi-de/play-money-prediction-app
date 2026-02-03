@@ -3,6 +3,8 @@ const router = express.Router();
 const User = require('../models/User');
 const Market = require('../models/Market');
 const Order = require('../models/Order');
+const AuditLog = require('../models/AuditLog');
+const { requireAdmin } = require('../middleware/auth');
 
 // --- USERS ---
 
@@ -45,6 +47,32 @@ router.get('/leaderboard', async (req, res) => {
   }
 });
 
+// --- ADMIN ---
+
+// Check Admin Status
+router.get('/admin/check', async (req, res) => {
+  try {
+    const { userId } = req.query;
+    if (!userId) return res.json({ isAdmin: false });
+    
+    const user = await User.findById(userId);
+    res.json({ isAdmin: user ? user.isAdmin : false });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get Audit Logs (Protected)
+router.get('/admin/logs', requireAdmin, async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 50;
+    const logs = await AuditLog.find().sort({ timestamp: -1 }).limit(limit);
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // --- MARKETS ---
 
 // List Markets
@@ -76,14 +104,14 @@ router.get('/markets/:id', async (req, res) => {
   }
 });
 
-// Create Market (Seed/Admin)
-router.post('/markets', async (req, res) => {
+// Create Market (Protected)
+router.post('/markets', requireAdmin, async (req, res) => {
   try {
     const { question, description, outcomes, closesAt, category } = req.body;
     
     // Initialize pools
     const outcomePools = {};
-    const initialSeed = 0; // Or we can seed with 0
+    const initialSeed = 0; 
     outcomes.forEach(o => outcomePools[o] = initialSeed);
 
     const market = new Market({
@@ -95,7 +123,38 @@ router.post('/markets', async (req, res) => {
       closesAt
     });
     await market.save();
+
+    // Audit Log
+    await new AuditLog({
+      userId: req.adminUser._id,
+      username: req.adminUser.username,
+      action: 'CREATE_MARKET',
+      targetId: market._id,
+      details: { question, category }
+    }).save();
+
     res.json(market);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete Market (Protected)
+router.delete('/markets/:id', requireAdmin, async (req, res) => {
+  try {
+    const market = await Market.findByIdAndDelete(req.params.id);
+    if (!market) return res.status(404).json({ error: 'Market not found' });
+
+    // Audit Log
+    await new AuditLog({
+      userId: req.adminUser._id,
+      username: req.adminUser.username,
+      action: 'DELETE_MARKET',
+      targetId: market._id,
+      details: { question: market.question }
+    }).save();
+
+    res.json({ message: 'Market deleted', marketId: req.params.id });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -119,22 +178,19 @@ router.post('/orders', async (req, res) => {
         return res.status(400).json({ error: 'Insufficient balance or User not found' });
     }
 
-    // 2. Verify Market Open (Double check)
-    // Note: Technically still a tiny race window on status if it closes *right now*, 
-    // but less critical than double-spending logic.
+    // 2. Verify Market Open
     const market = await Market.findById(marketId);
     if (!market || market.status !== 'OPEN' || new Date() > new Date(market.closesAt)) {
-        // Refund if market closed in verify step
+        // Refund if market closed
         await User.findByIdAndUpdate(userId, { $inc: { points: amount } });
         return res.status(400).json({ error: 'Market is closed or invalid' });
     }
 
     // 3. Atomic Pool Update
-    // dynamic key for map update in dot notation: "outcomePools.Yes"
     const poolUpdate = {};
     poolUpdate[`outcomePools.${outcome}`] = amount;
     
-    // We use findOneAndUpdate to ensure atomic increment of the specific map field
+    // We use findOneAndUpdate to ensure atomic increment
     const updatedMarket = await Market.findByIdAndUpdate(
         marketId,
         { $inc: poolUpdate },
@@ -156,8 +212,8 @@ router.post('/orders', async (req, res) => {
   }
 });
 
-// --- RESOLVE ---
-router.post('/markets/:id/resolve', async (req, res) => {
+// --- RESOLVE (Protected) ---
+router.post('/markets/:id/resolve', requireAdmin, async (req, res) => {
   try {
     const { outcome } = req.body;
     const market = await Market.findById(req.params.id);
@@ -170,22 +226,16 @@ router.post('/markets/:id/resolve', async (req, res) => {
     market.resolvedOutcome = outcome;
     
     // Calculate Payouts
-    // 1. Total Pool
     let totalPool = 0;
     for (let amount of market.outcomePools.values()) {
         totalPool += amount;
     }
     
-    // 2. Winning Pool
     const winningPool = market.outcomePools.get(outcome) || 0;
-
-    // 3. Find Winners
     const winningOrders = await Order.find({ marketId: market._id, outcome: outcome });
 
     if (winningPool > 0) {
         for (const order of winningOrders) {
-            // Share = (Order Amount / Winning Pool)
-            // Payout = Share * Total Pool
             const share = order.amount / winningPool;
             const payout = Math.floor(share * totalPool);
             
@@ -200,11 +250,19 @@ router.post('/markets/:id/resolve', async (req, res) => {
             order.payout = payout;
             await order.save();
         }
-    } else {
-        // Edge case: No winners? House keeps it.
     }
 
     await market.save();
+
+    // Audit Log
+    await new AuditLog({
+      userId: req.adminUser._id,
+      username: req.adminUser.username,
+      action: 'RESOLVE_MARKET',
+      targetId: market._id,
+      details: { outcome, totalPool }
+    }).save();
+
     res.json({ message: 'Market resolved', market });
 
   } catch (err) {
