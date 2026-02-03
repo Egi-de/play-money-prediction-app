@@ -50,6 +50,13 @@ export default function Admin() {
 
   const handleCreate = async (e) => {
     e.preventDefault();
+    
+    // Validate date
+    if (new Date(formData.closesAt) <= new Date()) {
+      alert('Error: Closing date must be in the future');
+      return;
+    }
+
     if (!confirm('Create this market?')) return;
 
     try {

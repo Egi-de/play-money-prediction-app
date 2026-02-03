@@ -35,15 +35,15 @@
   --skeleton-base: #1e2433;
   --skeleton-highlight: #252b3b;
   
-  /* Category Badge Colors */
-  --category-crypto: #f59e0b;
-  --category-weather: #3b82f6;
-  --category-tech: #8b5cf6;
-  --category-sports: #10b981;
-  --category-economics: #ef4444;
-  --category-science: #ec4899;
-  --category-politics: #f97316;
-  --category-all: #6b7280;
+  /* Category Badge Colors - Unified Professional Look */
+  --category-crypto: #14b8a6;
+  --category-weather: #14b8a6;
+  --category-tech: #14b8a6;
+  --category-sports: #14b8a6;
+  --category-economics: #14b8a6;
+  --category-science: #14b8a6;
+  --category-politics: #14b8a6;
+  --category-all: #14b8a6; /* All use Teal */
 }
 
   /* Light Theme */
@@ -81,15 +81,15 @@
     background-color: var(--bg-primary);
     color: var(--text-primary);
     
-    /* Category Badge Colors */
-    --category-crypto: #f59e0b;
-    --category-weather: #3b82f6;
-    --category-tech: #8b5cf6;
-    --category-sports: #10b981;
-    --category-economics: #ef4444;
-    --category-science: #db2777;
-    --category-politics: #ea580c;
-    --category-all: #6b7280;
+    /* Category Badge Colors - Unified */
+    --category-crypto: #0d9488;
+    --category-weather: #0d9488;
+    --category-tech: #0d9488;
+    --category-sports: #0d9488;
+    --category-economics: #0d9488;
+    --category-science: #0d9488;
+    --category-politics: #0d9488;
+    --category-all: #0d9488;
   }
 
   /* Ensure body also gets it */

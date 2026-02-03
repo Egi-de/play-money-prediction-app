@@ -109,6 +109,11 @@ router.post('/markets', requireAdmin, async (req, res) => {
   try {
     const { question, description, outcomes, closesAt, category } = req.body;
     
+    // Validate closesAt date
+    if (new Date(closesAt) <= new Date()) {
+      return res.status(400).json({ error: 'Closing date must be in the future' });
+    }
+    
     // Initialize pools
     const outcomePools = {};
     const initialSeed = 0; 
