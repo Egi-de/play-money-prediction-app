@@ -233,10 +233,8 @@ export default function MarketDetail() {
               <p style={{ color: 'var(--text-secondary)' }}>This market is no longer accepting predictions</p>
             </div>
           ) : isAdmin ? (
-            <div className="bg-red-600/10 border border-red-600/30 rounded-lg p-6 text-center">
-              <h4 className="text-lg font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Admin Account</h4>
-              <p style={{ color: 'var(--text-secondary)' }}>Admin users cannot place bets to avoid conflicts of interest</p>
-            </div>
+            // Admin sees nothing here
+            null
           ) : user ? (
             <form onSubmit={handlePredict}>
               {/* Outcome Selection */}
