@@ -91,13 +91,13 @@ export default function Navbar() {
             
             {username && (
               <Link 
-                to={`/profile/${username}`} 
+                to={isAdmin ? "/admin" : `/profile/${username}`}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
-                  location.pathname.includes('/profile') ? 'text-[var(--accent-primary)]' : ''
+                  (isAdmin ? isActive('/admin') : location.pathname.includes('/profile')) ? 'text-[var(--accent-primary)]' : ''
                 }`}
                 style={{ 
-                  color: location.pathname.includes('/profile') ? 'var(--accent-primary)' : 'var(--text-secondary)',
-                  backgroundColor: location.pathname.includes('/profile') ? 'rgba(20, 184, 166, 0.1)' : 'transparent'
+                  color: (isAdmin ? isActive('/admin') : location.pathname.includes('/profile')) ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                  backgroundColor: (isAdmin ? isActive('/admin') : location.pathname.includes('/profile')) ? 'rgba(20, 184, 166, 0.1)' : 'transparent'
                 }}
               >
                 <LayoutDashboard className="h-4 w-4" />
@@ -118,27 +118,11 @@ export default function Navbar() {
               <Trophy className="h-4 w-4" />
               <span>Leaderboard</span>
             </Link>
-
-            {isAdmin && (
-              <Link 
-                to="/admin" 
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-bold transition ${
-                  isActive('/admin') ? 'text-red-500' : ''
-                }`}
-                style={{ 
-                  color: isActive('/admin') ? '#ef4444' : 'var(--text-secondary)',
-                  backgroundColor: isActive('/admin') ? 'rgba(239, 68, 68, 0.1)' : 'transparent'
-                }}
-              >
-                <LayoutDashboard className="h-4 w-4" />
-                <span>Admin</span>
-              </Link>
-            )}
           </div>
           
           {/* Right: Points, Theme Toggle, User */}
           <div className="flex items-center space-x-4">
-            {username && userPoints !== null && (
+            {username && userPoints !== null && !isAdmin && (
               <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg" style={{ backgroundColor: 'var(--bg-card)' }}>
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--accent-primary)' }}></div>
                 <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>
