@@ -32,7 +32,12 @@ export default function Home() {
     try {
       const params = categoryFilter !== 'All' ? { category: categoryFilter } : {};
       const res = await api.get('/markets', { params });
-      setMarkets(res.data);
+      if (Array.isArray(res.data)) {
+        setMarkets(res.data);
+      } else {
+        console.error('Expected array of markets but got:', res.data);
+        setMarkets([]);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -51,7 +56,7 @@ export default function Home() {
   };
 
   // Filter markets based on search and status
-  const filteredMarkets = markets.filter(market => {
+  const filteredMarkets = (Array.isArray(markets) ? markets : []).filter(market => {
     const matchesSearch = market.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          market.description?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || 
