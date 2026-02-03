@@ -17,7 +17,7 @@ function App() {
   return (
     <AdminProvider>
       <Router>
-        <ToastContainer position="bottom-right" theme="dark" />
+        <ToastContainer position="top-right" theme="dark" />
         <div className="min-h-screen transition-colors duration-300" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
           <Navbar />
           <main>
