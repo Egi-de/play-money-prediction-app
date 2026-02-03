@@ -31,8 +31,14 @@ export const AdminProvider = ({ children }) => {
     checkAdminStatus();
   }, []);
 
+  const resetAdminStatus = () => {
+    console.log('[AdminContext] Resetting admin status');
+    setIsAdmin(false);
+    setLoading(false);
+  };
+
   return (
-    <AdminContext.Provider value={{ isAdmin, loading, checkAdminStatus }}>
+    <AdminContext.Provider value={{ isAdmin, loading, checkAdminStatus, resetAdminStatus }}>
       {children}
     </AdminContext.Provider>
   );

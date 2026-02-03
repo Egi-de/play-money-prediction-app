@@ -40,7 +40,7 @@ router.get('/users/:username', async (req, res) => {
 // Leaderboard
 router.get('/leaderboard', async (req, res) => {
   try {
-    const users = await User.find().sort({ points: -1 }).limit(10);
+    const users = await User.find({ isAdmin: false }).sort({ points: -1 }).limit(10);
     res.json(users);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -166,6 +166,15 @@ router.post('/orders', async (req, res) => {
     const { userId, marketId, outcome, amount } = req.body;
 
     if (amount <= 0) return res.status(400).json({ error: 'Amount must be positive' });
+
+    // 0. Prevent admin users from betting
+    const bettingUser = await User.findById(userId);
+    if (!bettingUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    if (bettingUser.isAdmin) {
+      return res.status(403).json({ error: 'Admin users cannot place bets' });
+    }
 
     // 1. Atomic Balance Check & Deduct
     const user = await User.findOneAndUpdate(

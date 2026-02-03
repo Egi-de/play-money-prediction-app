@@ -11,7 +11,7 @@ export default function Navbar() {
   const [userPoints, setUserPoints] = useState(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const { isAdmin } = useAdmin(); // Get admin status
+  const { isAdmin, resetAdminStatus } = useAdmin(); // Get admin status and reset function
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -48,6 +48,7 @@ export default function Navbar() {
     localStorage.removeItem('userId');
     setUsername('');
     setUserPoints(null);
+    resetAdminStatus(); // Reset admin state
     navigate('/');
   };
 

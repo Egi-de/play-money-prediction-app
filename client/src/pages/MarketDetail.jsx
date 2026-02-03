@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import api from '../api/client';
 import LoginModal from '../components/LoginModal';
+import { useAdmin } from '../context/AdminContext';
 
 const getCategoryColor = (category) => {
   const colors = {
@@ -26,6 +27,7 @@ export default function MarketDetail() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const { isAdmin } = useAdmin();
 
   useEffect(() => {
     fetchData();
@@ -215,6 +217,7 @@ export default function MarketDetail() {
             </div>
           )}
 
+
           {isResolved ? (
             <div className="rounded-lg p-6 text-center" style={{ backgroundColor: 'rgba(20, 184, 166, 0.1)', border: '1px solid rgba(20, 184, 166, 0.3)' }}>
               <h4 className="text-lg font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Market Resolved</h4>
@@ -226,6 +229,11 @@ export default function MarketDetail() {
             <div className="bg-yellow-600/10 border border-yellow-600/30 rounded-lg p-6 text-center">
               <h4 className="text-lg font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Market Closed</h4>
               <p style={{ color: 'var(--text-secondary)' }}>This market is no longer accepting predictions</p>
+            </div>
+          ) : isAdmin ? (
+            <div className="bg-red-600/10 border border-red-600/30 rounded-lg p-6 text-center">
+              <h4 className="text-lg font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Admin Account</h4>
+              <p style={{ color: 'var(--text-secondary)' }}>Admin users cannot place bets to avoid conflicts of interest</p>
             </div>
           ) : user ? (
             <form onSubmit={handlePredict}>
