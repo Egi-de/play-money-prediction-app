@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import api from '../api/client';
 import LoginModal from '../components/LoginModal';
@@ -30,6 +30,14 @@ export default function MarketDetail() {
   const [success, setSuccess] = useState('');
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { isAdmin } = useAdmin();
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAdmin) {
+      navigate('/admin');
+    }
+  }, [isAdmin, navigate]);
 
   useEffect(() => {
     fetchData();
