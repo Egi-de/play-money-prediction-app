@@ -9,15 +9,19 @@ export const AdminProvider = ({ children }) => {
 
   const checkAdminStatus = async () => {
     const userId = localStorage.getItem('userId');
+    console.log('[AdminContext] Checking admin status for userId:', userId);
+    
     if (userId) {
       try {
         const res = await api.get('/admin/check', { params: { userId } });
+        console.log('[AdminContext] Admin check response:', res.data);
         setIsAdmin(res.data.isAdmin);
       } catch (err) {
-        console.error('Error checking admin status', err);
+        console.error('[AdminContext] Error checking admin status:', err);
         setIsAdmin(false);
       }
     } else {
+      console.log('[AdminContext] No userId found, setting isAdmin to false');
       setIsAdmin(false);
     }
     setLoading(false);
