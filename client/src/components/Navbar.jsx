@@ -151,13 +151,13 @@ export default function Navbar() {
                     }}
                   >
                     <Link 
-                      to={`/profile/${username}`}
+                      to={isAdmin ? "/admin" : `/profile/${username}`}
                       className="flex items-center px-4 py-2 text-sm transition hover:bg-[var(--bg-card-hover)]"
                       style={{ color: 'var(--text-primary)' }}
                       onClick={() => setShowProfileMenu(false)}
                     >
-                      <User className="h-4 w-4 mr-2" />
-                      Profile
+                      {isAdmin ? <LayoutDashboard className="h-4 w-4 mr-2" /> : <User className="h-4 w-4 mr-2" />}
+                      {isAdmin ? 'Admin Panel' : 'Profile'}
                     </Link>
                     <button
                       onClick={() => {

@@ -65,103 +65,115 @@ export default function Profile() {
             </div>
           </div>
           
-          <div className="text-right">
-            <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>Current Balance</p>
-            <p className="text-5xl font-bold" style={{ color: 'var(--accent-primary)' }}>{data.user.points}</p>
-            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>points</p>
-          </div>
+          {!data.user.isAdmin && (
+            <div className="text-right">
+              <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>Current Balance</p>
+              <p className="text-5xl font-bold" style={{ color: 'var(--accent-primary)' }}>{data.user.points}</p>
+              <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>points</p>
+            </div>
+          )}
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t" style={{ borderColor: 'var(--border-primary)' }}>
-          <div className="text-center">
-            <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{data.orders.length}</p>
-            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Total Predictions</p>
-          </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{totalBet}</p>
-            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Total Wagered</p>
-          </div>
-          <div className="text-center">
-            <p className={`text-2xl font-bold flex items-center justify-center ${
-              netProfit >= 0 ? 'text-green-400' : 'text-red-400'
-            }`}>
-              {netProfit >= 0 ? (
-                <TrendingUp className="h-5 w-5 mr-1" />
-              ) : (
-                <TrendingDown className="h-5 w-5 mr-1" />
-              )}
-              {netProfit >= 0 ? '+' : ''}{netProfit}
+        {data.user.isAdmin ? (
+          <div className="mt-8 pt-6 border-t" style={{ borderColor: 'var(--border-primary)' }}>
+            <p className="text-center text-lg" style={{ color: 'var(--text-secondary)' }}>
+              Administrator Account
             </p>
-            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Net Profit/Loss</p>
           </div>
-        </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t" style={{ borderColor: 'var(--border-primary)' }}>
+            <div className="text-center">
+              <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{data.orders.length}</p>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Total Predictions</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{totalBet}</p>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Total Wagered</p>
+            </div>
+            <div className="text-center">
+              <p className={`text-2xl font-bold flex items-center justify-center ${
+                netProfit >= 0 ? 'text-green-400' : 'text-red-400'
+              }`}>
+                {netProfit >= 0 ? (
+                  <TrendingUp className="h-5 w-5 mr-1" />
+                ) : (
+                  <TrendingDown className="h-5 w-5 mr-1" />
+                )}
+                {netProfit >= 0 ? '+' : ''}{netProfit}
+              </p>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Net Profit/Loss</p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Activity History */}
-      <div>
-        <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Activity History</h2>
-        <div className="rounded-xl overflow-hidden border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
-          {data.orders.length === 0 ? (
-            <div className="p-8 text-center" style={{ color: 'var(--text-secondary)' }}>
-              No predictions yet. Start trading to see your history!
-            </div>
-          ) : (
-            data.orders.map(order => {
-              const isWin = order.payout > 0;
-              const profit = order.payout - order.amount;
-              
-              return (
-                <div 
-                  key={order._id} 
-                  className="p-5 border-b last:border-b-0 transition"
-                  style={{ borderColor: 'var(--border-primary)' }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-card-hover)'}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <p className="font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
-                        {order.marketId?.question || "Unknown Market"}
-                      </p>
-                      <div className="flex items-center space-x-3 text-sm">
-                        <span className={`font-bold ${
-                          order.outcome === 'Yes' ? 'text-green-400' : 'text-red-400'
-                        }`}>
-                          {order.outcome}
-                        </span>
-                        <span className="text-gray-500">•</span>
-                        <span className="text-gray-400">
-                          {new Date(order.timestamp).toLocaleDateString()}
-                        </span>
+      {!data.user.isAdmin && (
+        <div>
+          <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Activity History</h2>
+          <div className="rounded-xl overflow-hidden border" style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-primary)' }}>
+            {data.orders.length === 0 ? (
+              <div className="p-8 text-center" style={{ color: 'var(--text-secondary)' }}>
+                No predictions yet. Start trading to see your history!
+              </div>
+            ) : (
+              data.orders.map(order => {
+                const isWin = order.payout > 0;
+                const profit = order.payout - order.amount;
+                
+                return (
+                  <div 
+                    key={order._id} 
+                    className="p-5 border-b last:border-b-0 transition"
+                    style={{ borderColor: 'var(--border-primary)' }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-card-hover)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <p className="font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
+                          {order.marketId?.question || "Unknown Market"}
+                        </p>
+                        <div className="flex items-center space-x-3 text-sm">
+                          <span className={`font-bold ${
+                            order.outcome === 'Yes' ? 'text-green-400' : 'text-red-400'
+                          }`}>
+                            {order.outcome}
+                          </span>
+                          <span className="text-gray-500">•</span>
+                          <span className="text-gray-400">
+                            {new Date(order.timestamp).toLocaleDateString()}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div className="text-right ml-4">
-                      <div className="font-mono">
-                        <span className="text-red-400">-{order.amount}</span>
+                      
+                      <div className="text-right ml-4">
+                        <div className="font-mono">
+                          <span className="text-red-400">-{order.amount}</span>
+                          {isWin && (
+                            <span className="text-green-400 ml-2">+{order.payout}</span>
+                          )}
+                        </div>
                         {isWin && (
-                          <span className="text-green-400 ml-2">+{order.payout}</span>
+                          <div className="text-xs text-green-400 font-medium mt-1">
+                            +{profit} profit
+                          </div>
+                        )}
+                        {order.payout === 0 && order.marketId?.status === 'RESOLVED' && (
+                          <div className="text-xs text-gray-500 mt-1">
+                            Lost
+                          </div>
                         )}
                       </div>
-                      {isWin && (
-                        <div className="text-xs text-green-400 font-medium mt-1">
-                          +{profit} profit
-                        </div>
-                      )}
-                      {order.payout === 0 && order.marketId?.status === 'RESOLVED' && (
-                        <div className="text-xs text-gray-500 mt-1">
-                          Lost
-                        </div>
-                      )}
                     </div>
                   </div>
-                </div>
-              );
-            })
-          )}
+                );
+              })
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
