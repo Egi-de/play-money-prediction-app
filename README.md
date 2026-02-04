@@ -18,6 +18,17 @@ A full-stack prediction market platform inspired by Polymarket, built with the M
 - **📱 Responsive Design**: Beautiful on desktop, tablet, and mobile
 - **⚡ Skeleton Loading**: Premium loading states for instant perceived performance
 
+## 🔐 Demo Access
+
+To access the Admin Dashboard and test market resolution features:
+
+### Hosted Demo
+**URL**: [https://predictx-market.vercel.app](https://predictx-market.vercel.app)
+- **Admin Username**: `predictx-admin`
+
+### Local Development
+- **Admin Username**: `admin`
+
 ## 🛠 Tech Stack
 
 ### Frontend
