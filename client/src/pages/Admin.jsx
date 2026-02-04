@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import api from "../api/client";
 import { toast } from "react-toastify";
 
@@ -19,24 +19,19 @@ export default function Admin() {
 
   const userId = localStorage.getItem("userId");
 
-  useEffect(() => {
-    if (activeTab === "markets") fetchMarkets();
-    if (activeTab === "logs") fetchLogs();
-  }, [activeTab]);
-
-  const fetchMarkets = async () => {
+  const fetchMarkets = useCallback(async () => {
     setLoading(true);
     try {
       const res = await api.get("/markets?category=All");
       setMarkets(res.data);
-    } catch (err) {
+    } catch {
       toast.error("Failed to fetch markets");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchLogs = async () => {
+  const fetchLogs = useCallback(async () => {
     setLoading(true);
     try {
       // Pass userId in query for middleware
@@ -49,7 +44,12 @@ export default function Admin() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    if (activeTab === "markets") fetchMarkets();
+    if (activeTab === "logs") fetchLogs();
+  }, [activeTab, fetchMarkets, fetchLogs]);
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -122,7 +122,7 @@ export default function Admin() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-8">
+      <h1 className="text-3xl font-bold bg-linear-to-r from-primary to-accent bg-clip-text text-transparent mb-8">
         Admin Dashboard
       </h1>
 
@@ -345,8 +345,20 @@ export default function Admin() {
                           {log.action}
                         </span>
                       </td>
-                      <td className="py-3 text-text-secondary max-w-md truncate">
-                        {JSON.stringify(log.details)}
+                      <td className="py-3 text-text-secondary">
+                        <div className="space-y-1">
+                          {log.details &&
+                            Object.entries(log.details).map(([key, value]) => (
+                              <div key={key} className="flex gap-2">
+                                <span className="text-text-primary font-medium">
+                                  {key}:
+                                </span>
+                                <span className="text-text-secondary break-all">
+                                  {String(value)}
+                                </span>
+                              </div>
+                            ))}
+                        </div>
                       </td>
                     </tr>
                   ))}
